@@ -1,0 +1,145 @@
+<div class="container p-5" *ngIf="visibilidadeTabela">
+    <div class="border border-light rounded p-5">
+      <div>
+        <button type="button" class="btn btn-sm btn-secondary" (click)="exibirFormularioCadastroNF()">
+          Nova Nota Fiscal
+        </button>
+      </div>
+  
+      <hr />
+  
+      <table class="table table-striped table-hover table-sm" *ngIf="notasFiscais.length > 0">
+        <thead class="thead-light">
+          <tr>
+            <th>Número da Nota</th>
+            <th>Data de Emissão</th>
+            <th>Valor Total</th>
+            <th>CNPJ Emitente</th>
+            <th>CNPJ Destinatário</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let notaFiscal of notasFiscais">
+            <td>{{ notaFiscal.numeroNota }}</td>
+            <td>{{ notaFiscal.dataEmissao | date: 'dd/MM/yyyy' }}</td>
+            <td>{{ notaFiscal.valorTotal | currency: 'BRL' }}</td>
+            <td>{{ notaFiscal.cnpjEmitente | mask: '00.000.000/0000-00'}}</td>
+            <td>{{ notaFiscal.cnpjDestinatario | mask: '00.000.000/0000-00'}}</td>
+            <td>
+              <button
+                type="button"
+                class="btn btn-sm btn-outline-info"
+                (click)="exibirFormularioAtualizacao(notaFiscal.id)"
+              >
+                Atualizar
+              </button>
+              |
+              <button
+                type="button"
+                class="btn btn-sm btn-outline-danger"
+                (click)="exibirConfirmacaoExclusao(notaFiscal.id, conteudoModal)"
+              >
+                Excluir
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+  <div class="container p-5" *ngIf="visibilidadeFormulario">
+    <div class="row">
+      <div class="col-8 border border-light rounded p-5 shadow">
+        <h6>{{ tituloFormulario }}</h6>
+        <hr />
+  
+        <form [formGroup]="nfE" (ngSubmit)="enviarFormulario()">
+          <div class="form-group">
+            <label>Número da Nota</label>
+            <input
+              type="text"
+              id="numeroNota"
+              class="form-control form-control-sm"
+              formControlName="numeroNota"
+              readonly
+            />
+          </div>
+  
+          <div class="form-group">
+            <label>Data de Emissão</label>
+            <input
+              type="date"
+              id="dataEmissao"
+              class="form-control form-control-sm"
+              formControlName="dataEmissao"
+            />
+          </div>
+  
+          <div class="form-group">
+            <label>Valor Total</label>
+            <input
+              type="number"
+              id="valorTotal"
+              class="form-control form-control-sm"
+              formControlName="valorTotal"
+            />
+          </div>
+  
+          <div class="form-group">
+            <label>CNPJ Emitente</label>
+            <input
+              type="text"
+              id="cnpjEmitente"
+              class="form-control form-control-sm"
+              formControlName="cnpjEmitente"
+              mask="00.000.000/0000-00"
+            />
+          </div>
+  
+          <div class="form-group">
+            <label>CNPJ Destinatário</label>
+            <input
+              type="text"
+              id="cnpjDestinatario"
+              class="form-control form-control-sm"
+              formControlName="cnpjDestinatario"
+              mask="00.000.000/0000-00"
+            />
+          </div>
+  
+          <div class="container">
+            <div class="row">
+              <div>
+                <button type="submit" class="btn btn-sm btn-outline-secondary">
+                  Salvar
+                </button>
+              </div>
+              <div class="pl-1">
+                <button type="button" class="btn btn-sm btn-light" (click)="voltar()">Voltar</button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+  <ng-template #conteudoModal>
+    <div class="modal-header">
+      <h4 class="modal-title pull-left">Confirmação de Exclusão</h4>
+      <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      Tem certeza de que deseja excluir a Nota Fiscal de número {{ numeroNota }}?
+    </div>
+  
+    <div class="modal-footer">
+      <button type="button" class="btn btn-light" (click)="modalRef.hide()">Não</button>
+      <button type="button" class="btn btn-outline-danger" (click)="excluirNotaFiscal()">Sim</button>
+    </div>
+  </ng-template>
+  
